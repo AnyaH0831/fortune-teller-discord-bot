@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import random
+from datetime import datetime
 from data.responses import responses
 import os
 from groq import AsyncGroq
@@ -24,6 +25,7 @@ class EightBall(commands.Cog):
         if not GROQ_API_KEY:
             await interaction.followup.send("Groq API key not set.", ephemeral=True)
             return
+        now = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
         try:
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
@@ -44,6 +46,7 @@ class EightBall(commands.Cog):
         if not GROQ_API_KEY:
             await interaction.followup.send("Groq API key not set.", ephemeral=True)
             return
+        now = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
         try:
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
@@ -52,8 +55,8 @@ class EightBall(commands.Cog):
                     {"role": "user", "content": question}
                 ],
                 max_tokens=200
-            )
-            answer = response.choices[0].message.content
+            )   
+            answer = response.choices[0].message.content 
         except Exception as e:
             answer = f"Sorry, the crystal ball got struck by lightning (currently attempting to fix). ({e})"
         await interaction.followup.send(f'**{interaction.user.display_name}:** {question}\n**Crystal Ball:** {answer}')
