@@ -23,7 +23,7 @@ class PalmReading(commands.Cog):
             return
         image_bytes = await attachment.read()
         try:
-            prompt = "You are a mystical palm reader. Given the following image of a palm, provide a fun, mysterious, and imaginative palm reading. Answer in at most 3 sentences."
+            prompt = "You are a mystical palm reader. Given the following image of a palm, provide a fun, mysterious, and imaginative palm reading. Answer in at most 3 sentences. Don't read it if the picture is not a palm and instead respond saying to send a picture of an actual palm."
 
             image_b64 = base64.b64encode(image_bytes).decode("utf-8")
             response = client.chat.completions.create(
