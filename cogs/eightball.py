@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import random
+from datetime import datetime
 from data.responses import responses
 import os
 from groq import AsyncGroq
@@ -24,6 +25,7 @@ class EightBall(commands.Cog):
         if not GROQ_API_KEY:
             await interaction.followup.send("Groq API key not set.", ephemeral=True)
             return
+        now = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
         try:
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
@@ -37,13 +39,14 @@ class EightBall(commands.Cog):
         except Exception as e:
             answer = f"Sorry, the fortune teller ran away (temporarily). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**Fortune Teller:** {answer}')
-        
+ 
     @app_commands.command(name="future", description="Ask the crystal ball what will happen.")
     async def future(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
         if not GROQ_API_KEY:
             await interaction.followup.send("Groq API key not set.", ephemeral=True)
             return
+        now = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
         try:
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
@@ -52,8 +55,8 @@ class EightBall(commands.Cog):
                     {"role": "user", "content": question}
                 ],
                 max_tokens=200
-            )
-            answer = response.choices[0].message.content
+            )   
+            answer = response.choices[0].message.content 
         except Exception as e:
             answer = f"Sorry, the crystal ball got struck by lightning (currently attempting to fix). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**Crystal Ball:** {answer}')
