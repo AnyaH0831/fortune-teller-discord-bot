@@ -10,7 +10,7 @@ class EightBall(commands.Cog):
     @commands.command(name="8ball")
     async def magic_8ball(self, ctx, *, question: str):
         answer = random.choice(responses)
-        await ctx.send(f'**Question:** {question}\n**Answer:** {answer}')
+        await ctx.send(f'🎱 **Question:** {question}\n**Answer:** {answer}')
 
 async def setup(bot):
     await bot.add_cog(EightBall(bot))
