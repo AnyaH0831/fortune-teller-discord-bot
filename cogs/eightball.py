@@ -4,11 +4,10 @@ from discord import app_commands
 import random
 from data.responses import responses
 import os
-from google import genai
-import asyncio
+from groq import AsyncGroq
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=GEMINI_API_KEY)
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+client = AsyncGroq(api_key=GROQ_API_KEY)
 
 class EightBall(commands.Cog):
     def __init__(self, bot):
@@ -20,45 +19,43 @@ class EightBall(commands.Cog):
         await interaction.response.send_message(f'**Question:** {question}\n**Fortune Teller:** {answer}')
 
     @app_commands.command(name="8ball", description="Ask the slightly-less magical less all-knowing 8-ball a question.")
-    async def gemini_8ball(self, interaction: discord.Interaction, question: str):
+    async def groq_8ball(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
-        if not GEMINI_API_KEY:
-            await interaction.followup.send("Gemini API key not set", ephemeral=True)
+        if not GROQ_API_KEY:
+            await interaction.followup.send("Groq API key not set.", ephemeral=True)
             return
-        prompt = f"""
-        You are a mystical, playful, and wise 8-ball. Answer the following question in a fun, mysterious, and concise way, as if you are a magical fortune teller.
-        Question: {question}
-        """
         try:
-            response = await asyncio.to_thread(
-                client.models.generate_content,
-                model="gemini-2.0-flash",
-                contents=prompt
+            response = await client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": "You are a mystical, playful, and wise 8-ball. Answer questions in a fun, mysterious, and concise way, as if you are a magical fortune teller."},
+                    {"role": "user", "content": question}
+                ],
+                max_tokens=200
             )
-            answer = response.text
+            answer = response.choices[0].message.content
         except Exception as e:
             answer = f"Sorry, the fortune teller ran away (temporarily). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**8ball:** {answer}')
-
+        
     @app_commands.command(name="future", description="Ask the crystal ball what will happen.")
     async def future(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
-        if not GEMINI_API_KEY:
-            await interaction.followup.send("Gemini API key not set", ephemeral=True)
+        if not GROQ_API_KEY:
+            await interaction.followup.send("Groq API key not set.", ephemeral=True)
             return
-        prompt = f"""
-        You are a magical fortune teller's crystal ball. Given the following situation, predict what will happen next. Be imaginative, mysterious, and concise, as if you are peering into the mists of the future.
-        Question: {question}
-        """
         try:
-            response = await asyncio.to_thread(
-                client.models.generate_content,
-                model="gemini-2.0-flash",
-                contents=prompt
+            response = await client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": "You are a magical fortune teller's crystal ball. Predict what will happen next in an imaginative, mysterious, and concise way, as if you are peering into the mists of the future."},
+                    {"role": "user", "content": question}
+                ],
+                max_tokens=200
             )
-            answer = response.text
+            answer = response.choices[0].message.content
         except Exception as e:
-            answer = f"Sorry, the crystal ball got struck by lightening (currently attempting to fix). ({e})"
+            answer = f"Sorry, the crystal ball got struck by lightning (currently attempting to fix). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**Crystal Ball:** {answer}')
     
     @commands.Cog.listener()
