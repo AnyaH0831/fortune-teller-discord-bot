@@ -17,7 +17,7 @@ class EightBall(commands.Cog):
     @app_commands.command(name="8ball", description="Ask the slightly-less magical less all-knowing 8-ball a question.")
     async def magic_8ball(self, interaction: discord.Interaction, question: str):
         answer = random.choice(responses)
-        await interaction.response.send_message(f'**Question:** {question}\n**8ball:** {answer}')
+        await interaction.response.send_message(f'**{interaction.user.display_name}:** {question}\n**8ball:** {answer}')
 
     @app_commands.command(name="ask", description="Ask the magical all-knowing fortune teller a question.")
     async def groq_8ball(self, interaction: discord.Interaction, question: str):
@@ -38,8 +38,8 @@ class EightBall(commands.Cog):
             answer = response.choices[0].message.content
         except Exception as e:
             answer = f"Sorry, the fortune teller ran away (temporarily). ({e})"
-        await interaction.followup.send(f'**Question:** {question}\n**Fortune Teller:** {answer}')
- 
+        await interaction.followup.send(f'**{interaction.user.display_name}:** {question}\n**Fortune Teller:** {answer}')
+        
     @app_commands.command(name="future", description="Ask the crystal ball what will happen.")
     async def future(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
@@ -59,7 +59,7 @@ class EightBall(commands.Cog):
             answer = response.choices[0].message.content 
         except Exception as e:
             answer = f"Sorry, the crystal ball got struck by lightning (currently attempting to fix). ({e})"
-        await interaction.followup.send(f'**Question:** {question}\n**Crystal Ball:** {answer}')
+        await interaction.followup.send(f'**{interaction.user.display_name}:** {question}\n**Crystal Ball:** {answer}')
     
     @commands.Cog.listener()
     async def on_message(self, message):

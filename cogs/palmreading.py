@@ -35,7 +35,8 @@ class PalmReading(commands.Cog):
             reading = response.choices[0].message.content
         except Exception as e:
             reading = f"Sorry, the palm reader is sleeping. ({e})"
-        await interaction.followup.send(f"**Palm Reading:** {reading}")
+        image_file = await attachment.to_file()
+        await interaction.followup.send(f"**{interaction.user.display_name}'s Palm Reading:** {reading}", file=image_file)
 
 async def setup(bot):
     await bot.add_cog(PalmReading(bot))
