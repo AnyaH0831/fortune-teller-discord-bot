@@ -1,4 +1,3 @@
-# Score out of 10, short reason
 COMPATIBILITY = {
     ("aries", "aries"):         (7,  "Explosive energy — thrilling but exhausting."),
     ("aries", "taurus"):        (5,  "Fire meets earth — clash of speed vs stability."),
