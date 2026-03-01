@@ -4,11 +4,10 @@ from discord import app_commands
 import random
 from data.responses import responses
 import os
-import google.generativeai as genai
+from google import genai
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 class EightBall(commands.Cog):
     def __init__(self, bot):
@@ -30,20 +29,37 @@ class EightBall(commands.Cog):
         Question: {question}
         """
         try:
-            model = genai.GenerativeModel('gemini-2.5-pro')
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(model="gemini-1.5-flash",contents=prompt)
             answer = response.text.strip()
         except Exception as e:
             answer = f"Sorry, the fortune teller ran away (temporarily). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**8ball:** {answer}')
 
-        @commands.Cog.listener()
-        async def on_message(self, message):
-            if message.author.bot:
-                return
-            if message.content.startswith('c'):
-                if random.random() < 0.05:
-                    await message.channel.send('cookiesssssss')
+    @app_commands.command(name="future", description="Ask the crystal ball what will happen.")
+    async def future(self, interaction: discord.Interaction, question: str):
+        await interaction.response.defer()
+        if not GEMINI_API_KEY:
+            await interaction.followup.send("Gemini API key not set", ephemeral=True)
+            return
+        prompt = f"""
+        You are a magical fortune teller's crystal ball. Given the following situation, predict what will happen next. Be imaginative, mysterious, and concise, as if you are peering into the mists of the future.
+        Question: {question}
+        """
+        try:
+            response = client.models.generate_content(model="gemini-1.5-flash",contents=prompt)
+            answer = response.text.strip()
+        except Exception as e:
+            answer = f"Sorry, the crystal ball got struck by lightening (currently attempting to fix). ({e})"
+        await interaction.followup.send(f'**Question:** {question}\n**Crystal Ball:** {answer}')
+    
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+        if message.content.startswith('c'):
+            if random.random() < 0.05:
+                await message.channel.send('cookiesssssss')
+        await self.bot.process_commands(message)
 
 async def setup(bot):
     await bot.add_cog(EightBall(bot))
