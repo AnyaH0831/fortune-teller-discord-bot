@@ -1,3 +1,4 @@
+
 import discord
 from discord.ext import commands
 import config
@@ -5,25 +6,21 @@ import config
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=config.PREFIX, intents=intents)
+bot = commands.Bot(command_prefix=commands.when_mentioned, intents=intents)
 
-# COGS = ["cogs.eightball", "cogs.astrology", "cogs.zodiac"]
-COGS = ["cogs.astrology"]
+COGS = ["cogs.eightball", "cogs.astrology", "cogs.zodiac"]
 
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user} ({bot.user.id})")
-    await bot.tree.sync()
-
-@bot.event
-async def on_demand_error(ctx,error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send("Unknown command. Try `!help`")
-    elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Missing argument. Usage: `{ctx.prefix}{ctx.command.name}`")
+    try:
+        synced = await bot.tree.sync()
+        print(f"Synced {len(synced)} slash commands.")
+    except Exception as e:
+        print(f"Failed to sync commands: {e}")
 
 async def main():
-    async with bot: 
+    async with bot:
         for cog in COGS:
             await bot.load_extension(cog)
             print(f"Loaded {cog}")
