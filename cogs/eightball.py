@@ -5,6 +5,7 @@ import random
 from data.responses import responses
 import os
 from google import genai
+import asyncio
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY)
@@ -29,8 +30,12 @@ class EightBall(commands.Cog):
         Question: {question}
         """
         try:
-            response = client.models.generate_content(model="gemini-1.5-flash",contents=prompt)
-            answer = response.text.strip()
+            response = await asyncio.to_thread(
+                client.models.generate_content,
+                model="gemini-2.0-flash",
+                contents=prompt
+            )
+            answer = response.text
         except Exception as e:
             answer = f"Sorry, the fortune teller ran away (temporarily). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**8ball:** {answer}')
@@ -46,8 +51,12 @@ class EightBall(commands.Cog):
         Question: {question}
         """
         try:
-            response = client.models.generate_content(model="gemini-1.5-flash",contents=prompt)
-            answer = response.text.strip()
+            response = await asyncio.to_thread(
+                client.models.generate_content,
+                model="gemini-2.0-flash",
+                contents=prompt
+            )
+            answer = response.text
         except Exception as e:
             answer = f"Sorry, the crystal ball got struck by lightening (currently attempting to fix). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**Crystal Ball:** {answer}')
@@ -59,7 +68,6 @@ class EightBall(commands.Cog):
         if message.content.startswith('c'):
             if random.random() < 0.05:
                 await message.channel.send('cookiesssssss')
-        await self.bot.process_commands(message)
 
 async def setup(bot):
     await bot.add_cog(EightBall(bot))
