@@ -50,5 +50,4 @@ responses = [
     'R u ok',
     'Okayyyyy',
     'Hopefully',
-    'Cookiesss'
 ]
