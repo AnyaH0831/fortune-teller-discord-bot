@@ -18,7 +18,7 @@ class EightBall(commands.Cog):
         answer = random.choice(responses)
         await interaction.response.send_message(f'**Question:** {question}\n**8ball:** {answer}')
 
-    @app_commands.command(name="8ball", description="Ask the slightly-less magical less all-knowing 8-ball a question.")
+    @app_commands.command(name="ask", description="Ask the magical all-knowing fortune teller a question.")
     async def groq_8ball(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
         if not GROQ_API_KEY:
@@ -28,7 +28,7 @@ class EightBall(commands.Cog):
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "You are a mystical, playful, and wise 8-ball. Answer questions in a fun, mysterious, and concise way, as if you are a magical fortune teller."},
+                    {"role": "system", "content": "You are a mystical, playful, and wise fortune teller. Answer questions in a fun, mysterious, and concise way, as if you are a magical fortune teller."},
                     {"role": "user", "content": question}
                 ],
                 max_tokens=200
@@ -36,7 +36,7 @@ class EightBall(commands.Cog):
             answer = response.choices[0].message.content
         except Exception as e:
             answer = f"Sorry, the fortune teller ran away (temporarily). ({e})"
-        await interaction.followup.send(f'**Question:** {question}\n**8ball:** {answer}')
+        await interaction.followup.send(f'**Question:** {question}\n**Fortune Teller:** {answer}')
         
     @app_commands.command(name="future", description="Ask the crystal ball what will happen.")
     async def future(self, interaction: discord.Interaction, question: str):
