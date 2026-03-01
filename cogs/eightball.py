@@ -30,7 +30,7 @@ class EightBall(commands.Cog):
         Question: {question}
         """
         try:
-            model = genai.GenerativeModel('gemini-pro')
+            model = genai.GenerativeModel('gemini-2.5-pro')
             response = model.generate_content(prompt)
             answer = response.text.strip()
         except Exception as e:
@@ -42,7 +42,7 @@ class EightBall(commands.Cog):
             if message.author.bot:
                 return
             if message.content.startswith('c'):
-                if random.random() < 0.25:
+                if random.random() < 0.05:
                     await message.channel.send('cookiesssssss')
 
 async def setup(bot):
