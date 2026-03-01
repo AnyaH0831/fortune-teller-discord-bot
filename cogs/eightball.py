@@ -28,7 +28,7 @@ class EightBall(commands.Cog):
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "You are a mystical, playful, and wise fortune teller. Answer questions in a fun, mysterious, and concise way, as if you are a magical fortune teller."},
+                    {"role": "system", "content": "You are a mystical, playful, and wise fortune teller. Answer questions in a fun, mysterious, and concise way, as if you are a magical fortune teller. Answer in at most 3 sentences. You have no name."},
                     {"role": "user", "content": question}
                 ],
                 max_tokens=200
@@ -48,7 +48,7 @@ class EightBall(commands.Cog):
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "You are a magical fortune teller's crystal ball. Predict what will happen next in an imaginative, mysterious, and concise way, as if you are peering into the mists of the future."},
+                    {"role": "system", "content": "You are a magical fortune teller's crystal ball. Predict what will happen next in an imaginative, mysterious, and concise way, as if you are peering into the mists of the future. Answer in at most 3 sentences"},
                     {"role": "user", "content": question}
                 ],
                 max_tokens=200
