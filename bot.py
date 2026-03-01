@@ -19,7 +19,7 @@ async def on_ready():
         print(f"Synced {len(synced)} slash commands.")
     except Exception as e:
         print(f"Failed to sync commands: {e}")
-
+ 
 async def main():
     async with bot:
         for cog in COGS:

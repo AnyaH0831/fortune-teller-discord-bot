@@ -5,7 +5,7 @@ from data.horoscopes import ZODIAC_DATA
 from data.compatibility import get_compatibility
 from utils.zodiac_helpers import get_zodiac_sign, get_sign_emoji
 from utils.embeds import error_embed
-import random
+import aiohttp
 
 ALL_SIGNS = list(ZODIAC_DATA.keys())
 
@@ -15,7 +15,7 @@ SIGN_CHOICES = [
 ]
 
 
-class Astrology(commands.Cog):
+class Astrology(commands.Cog): 
     def __init__(self, bot):
         self.bot = bot
 
@@ -37,7 +37,7 @@ class Astrology(commands.Cog):
         embed.add_field(name="Element", value=data["element"], inline=True)
         embed.add_field(name="Ruling Planet", value=data["ruling_planet"], inline=True)
         await interaction.response.send_message(embed=embed)
-
+                    
     @app_commands.command(name="birthsign", description="Get your zodiac sign from your birthday.")
     @app_commands.describe(month="Your birth month (1-12)", day="Your birth day (1-31)")
     async def birthsign(self, interaction: discord.Interaction, month: int, day: int):
@@ -53,6 +53,7 @@ class Astrology(commands.Cog):
             description=data["description"],
             color=discord.Color.purple()
         )
+
         embed.add_field(name="Dates", value=data["dates"], inline=True)
         embed.add_field(name="Element", value=data["element"], inline=True)
         embed.add_field(name="Ruling Planet", value=data["ruling_planet"], inline=True)
@@ -86,7 +87,7 @@ class Astrology(commands.Cog):
         embed.set_footer(text="Use /zodiac to learn more about each sign.")
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="horoscope", description="Get a mystical horoscope reading.")
+    @app_commands.command(name="horoscope", description="Get today's horoscope reading.")
     @app_commands.describe(sign="Your zodiac sign.")
     @app_commands.choices(sign=SIGN_CHOICES)
     async def horoscope(self, interaction: discord.Interaction, sign: str):
@@ -95,27 +96,32 @@ class Astrology(commands.Cog):
             await interaction.response.send_message(embed=error_embed(f"Unknown sign `{sign}`. Try: {', '.join(ALL_SIGNS)}"), ephemeral=True)
             return
 
-        data = ZODIAC_DATA[sign]
-        readings = [
-            f"The stars align in your favor today, {sign.capitalize()}. Trust your instincts — a new opportunity is closer than you think.",
-            f"Mercury's energy surrounds you, {sign.capitalize()}. It's a powerful day to speak your truth and let go of what no longer serves you.",
-            f"The cosmos are asking you to slow down, {sign.capitalize()}. Reflection will reveal the answer you've been searching for.",
-            f"An unexpected connection may shift your path today, {sign.capitalize()}. Stay open to what the universe is sending your way.",
-            f"Your ruling planet {data['ruling_planet']} is working in your favor. Bold moves made today will ripple far into your future.",
-            f"The moon whispers of transformation, {sign.capitalize()}. What you release now will make space for something beautiful.",
-            f"Pay attention to your dreams and gut feelings today, {sign.capitalize()}. The universe is communicating something important.",
-            f"Creativity flows through you like a current, {sign.capitalize()}. Channel that {data['element']} energy into something that matters.",
-        ]
+        await interaction.response.defer()
 
+        url = f"https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign={sign}&day=today"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        try:
+            async with aiohttp.ClientSession(headers=headers) as session:
+                async with session.get(url) as resp:
+                    if resp.status != 200:
+                        await interaction.followup.send(embed=error_embed("Couldn't fetch today's horoscope. Try again later."))
+                        return
+                    json_data = await resp.json(content_type=None)
+                    horoscope_text = json_data.get("horoscope", "The stars are silent today.")
+        except Exception:
+            await interaction.followup.send(embed=error_embed("Failed to connect to the horoscope service. Try again later."))
+            return
+
+        data = ZODIAC_DATA[sign]
         embed = discord.Embed(
             title=f"{data['symbol']} Daily Horoscope: {sign.capitalize()}",
-            description=random.choice(readings),
+            description=horoscope_text,
             color=discord.Color.blurple()
         )
         embed.add_field(name="Element",       value=data["element"],       inline=True)
         embed.add_field(name="Ruling Planet", value=data["ruling_planet"], inline=True)
         embed.set_footer(text="The stars speak — will you listen?")
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot):
