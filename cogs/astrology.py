@@ -17,7 +17,7 @@ SIGN_CHOICES = [
 
 class Astrology(commands.Cog): 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot = bot       
 
     @app_commands.command(name="zodiac", description="Get info about a zodiac sign.")
     @app_commands.describe(sign="The zodiac sign to look up.")
@@ -122,6 +122,44 @@ class Astrology(commands.Cog):
         embed.add_field(name="Ruling Planet", value=data["ruling_planet"], inline=True)
         embed.set_footer(text="The stars speak — will you listen?")
         await interaction.followup.send(embed=embed)
+
+    @app_commands.command(name="matches", description="See all zodiac signs ranked by compatibility with your sign.")
+    @app_commands.describe(sign="Your zodiac sign.")
+    @app_commands.choices(sign=SIGN_CHOICES)
+    async def matches(self, interaction: discord.Interaction, sign: str):
+        sign = sign.lower().strip()
+        if sign not in ZODIAC_DATA:
+            await interaction.response.send_message(embed=error_embed(f"Unknown sign `{sign}`."), ephemeral=True)
+            return  
+             
+        results = []
+        for other in ALL_SIGNS:
+            if other == sign:    
+                continue
+            score, reason = get_compatibility(sign, other)
+            emoji = get_sign_emoji(other)
+            results.append((score, other, emoji, reason))
+
+        results.sort(key=lambda x: x[0], reverse=True)
+
+        data = ZODIAC_DATA[sign]
+        embed = discord.Embed(
+            title=f"{data['symbol']} {sign.capitalize()} : Compatibility Rankings",
+            color=discord.Color.purple()
+        )
+
+        high   = [r for r in results if r[0] >= 8]
+        medium = [r for r in results if 6 <= r[0] <= 7]
+        low    = [r for r in results if r[0] <= 5]
+
+        def fmt(entries):
+            return "\n".join(f"{e[2]} **{e[1].capitalize()}** — {e[0]}/10" for e in entries) or "None"
+
+        embed.add_field(name="Great Matches (8-10)", value=fmt(high),   inline=False)
+        embed.add_field(name="Decent Matches (6-7)", value=fmt(medium), inline=False)
+        embed.add_field(name="Tough Matches (1-5)",  value=fmt(low),    inline=False)
+        embed.set_footer(text="Use /compatibility for a detailed reading between two signs.")
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
