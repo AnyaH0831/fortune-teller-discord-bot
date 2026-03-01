@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import random
+from datetime import datetime
 from data.responses import responses
 import os
 from groq import AsyncGroq
@@ -24,11 +25,12 @@ class EightBall(commands.Cog):
         if not GROQ_API_KEY:
             await interaction.followup.send("Groq API key not set.", ephemeral=True)
             return
+        now = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
         try:
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "You are a mystical, playful, and wise fortune teller. Answer questions in a fun, mysterious, and concise way, as if you are a magical fortune teller. Answer in at most 3 sentences. You have no name."},
+                    {"role": "system", "content": f"You are a mystical, playful, and wise fortune teller. Answer questions in a fun, mysterious, and concise way, as if you are a magical fortune teller. Answer in at most 3 sentences. You have no name. The current date and time is {now}."},
                     {"role": "user", "content": question}
                 ],
                 max_tokens=200
@@ -37,23 +39,24 @@ class EightBall(commands.Cog):
         except Exception as e:
             answer = f"Sorry, the fortune teller ran away (temporarily). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**Fortune Teller:** {answer}')
-        
+ 
     @app_commands.command(name="future", description="Ask the crystal ball what will happen.")
     async def future(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
         if not GROQ_API_KEY:
             await interaction.followup.send("Groq API key not set.", ephemeral=True)
             return
+        now = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
         try:
             response = await client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "You are a magical fortune teller's crystal ball. Predict what will happen next in an imaginative, mysterious, and concise way, as if you are peering into the mists of the future. Answer in at most 3 sentences"},
+                    {"role": "system", "content": f"You are a magical fortune teller's crystal ball. Predict what will happen next in an imaginative, mysterious, and concise way, as if you are peering into the mists of the future. Answer in at most 3 sentences. The current date and time is {now}."},
                     {"role": "user", "content": question}
                 ],
                 max_tokens=200
-            )
-            answer = response.choices[0].message.content
+            )   
+            answer = response.choices[0].message.content 
         except Exception as e:
             answer = f"Sorry, the crystal ball got struck by lightning (currently attempting to fix). ({e})"
         await interaction.followup.send(f'**Question:** {question}\n**Crystal Ball:** {answer}')
