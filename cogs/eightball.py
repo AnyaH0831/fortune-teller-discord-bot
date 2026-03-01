@@ -14,12 +14,12 @@ class EightBall(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="8ball", description="Ask the magical all-knowing 8-ball a question.")
+    @app_commands.command(name="8ball", description="Ask the slightly-less magical less all-knowing 8-ball a question.")
     async def magic_8ball(self, interaction: discord.Interaction, question: str):
         answer = random.choice(responses)
         await interaction.response.send_message(f'**Question:** {question}\n**8ball:** {answer}')
 
-    @app_commands.command(name="ask", description="Ask the slightly-less magical less all-knowing fortune teller a question.")
+    @app_commands.command(name="ask", description="Ask the magical all-knowing fortune teller a question.")
     async def gemini_8ball(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
         if not GEMINI_API_KEY:
