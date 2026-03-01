@@ -26,7 +26,7 @@ class EightBall(commands.Cog):
             await interaction.followup.send("Gemini API key not set", ephemeral=True)
             return
         prompt = f"""
-        You are a mystical, playful, and wise 8-ball. Answer the following question in a fun, mysterious, and concise way, as if you are a magical fortune teller.
+        You are a mystical, playful, and wise 8-ball. Answer the following question in a fun, mysterious, and concise way, as if you are a magical fortune teller. Answer in at most 3 sentences.
         Question: {question}
         """
         try:
@@ -47,7 +47,7 @@ class EightBall(commands.Cog):
             await interaction.followup.send("Gemini API key not set", ephemeral=True)
             return
         prompt = f"""
-        You are a magical fortune teller's crystal ball. Given the following situation, predict what will happen next. Be imaginative, mysterious, and concise, as if you are peering into the mists of the future.
+        You are a magical fortune teller's crystal ball. Given the following situation, predict what will happen next. Be imaginative, mysterious, and concise, as if you are peering into the mists of the future. Answer in at most 3 sentences.
         Question: {question}
         """
         try:
