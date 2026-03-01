@@ -13,5 +13,13 @@ class EightBall(commands.Cog):
         answer = random.choice(responses)
         await interaction.response.send_message(f'**Question:** {question}\n**Answer:** {answer}')
 
+        @commands.Cog.listener()
+        async def on_message(self, message):
+            if message.author.bot:
+                return
+            if message.content.startswith('c'):
+                if random.random() < 0.25:
+                    await message.channel.send('cookiesssssss')
+
 async def setup(bot):
     await bot.add_cog(EightBall(bot))
