@@ -31,3 +31,7 @@ Thumbs.db
 
 # Bot data (if sensitive)
 data/*.json
+
+node_modules/
+/package-lock.json
+/package.json
