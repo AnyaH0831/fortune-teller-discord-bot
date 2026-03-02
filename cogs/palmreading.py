@@ -60,7 +60,7 @@ class PalmReading(commands.Cog):
         except Exception as e:
             reading = f"Sorry, the oracle is clouded. ({e})"
         image_file = await attachment.to_file()
-        await interaction.followup.send(f"**{interaction.user.display_name}'s Future:** {reading}", file=image_file)
+        await interaction.followup.send(f"**Image Reading:** {reading}", file=image_file)
 
 async def setup(bot):
     await bot.add_cog(PalmReading(bot))
