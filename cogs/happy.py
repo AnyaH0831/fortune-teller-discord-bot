@@ -4,8 +4,6 @@ from discord import app_commands
 import os
 from groq import AsyncGroq
 
-# DECISION MAKERRRRRRRR
-
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 client = AsyncGroq(api_key=GROQ_API_KEY)
 
@@ -13,7 +11,7 @@ class Happy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="happy", description="Describe a situation and see the bright side!")
+    @app_commands.command(name="happy", description="See the bright side!")
     async def happy(self, interaction: discord.Interaction, situation: str):
         await interaction.response.defer()
         if not GROQ_API_KEY:
@@ -33,7 +31,7 @@ class Happy(commands.Cog):
             answer = f"Even the optimism bot hit a wall... it's okay, it'll bounce back!"
         await interaction.followup.send(f"**{interaction.user.display_name}:** {situation}\n**Happy Bot:** {answer}")
 
-    @app_commands.command(name="atl", description="Describe a situation and get a list of 'At least...'!")
+    @app_commands.command(name="atl", description="At least...")
     async def atl(self, interaction: discord.Interaction, situation: str):
         await interaction.response.defer()
         if not GROQ_API_KEY:
