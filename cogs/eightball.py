@@ -61,6 +61,26 @@ class EightBall(commands.Cog):
             answer = f"Sorry, the crystal ball got struck by lightning (currently attempting to fix). ({e})"
         await interaction.followup.send(f'**{interaction.user.display_name}:** {question}\n**Crystal Ball:** {answer}')
     
+    @app_commands.command(name="decision", description="Find out what the better decision is!")
+    async def decision(self, interaction: discord.Interaction, decision: str):
+        await interaction.response.defer()
+        if not GROQ_API_KEY:
+            await interaction.followup.send("Groq API key not set.", ephemeral=True)
+            return
+        try:
+            response = await client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": "You are a decisive and confident oracle. The user will describe a decision they are facing. Pick one clear choice and explain why it is the better option in a fun, convincing, and slightly mystical way. Be direct: state the choice first, then give your reasoning. Answer in at most 3 sentences."},
+                    {"role": "user", "content": decision}
+                ],
+                max_tokens=200
+            )
+            answer = response.choices[0].message.content
+        except Exception as e:
+            answer = f"The oracle is too indecisive right now. ({e})"
+        await interaction.followup.send(f'**{interaction.user.display_name}:** {decision}\n**Oracle:** {answer}')
+
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author.bot:
