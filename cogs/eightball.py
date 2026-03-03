@@ -61,7 +61,7 @@ class EightBall(commands.Cog):
             answer = f"Sorry, the crystal ball got struck by lightning (currently attempting to fix). ({e})"
         await interaction.followup.send(f'**{interaction.user.display_name}:** {question}\n**Crystal Ball:** {answer}')
     
-    @app_commands.command(name="decision", description="Find out what the better decision is!")
+    @app_commands.command(name="decide", description="Find out what the better decision is!")
     async def decision(self, interaction: discord.Interaction, decision: str):
         await interaction.response.defer()
         if not GROQ_API_KEY:
