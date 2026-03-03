@@ -8,7 +8,7 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix=commands.when_mentioned, intents=intents)
 
-COGS = ["cogs.eightball", "cogs.astrology", "cogs.palmreading"]
+COGS = ["cogs.eightball", "cogs.astrology", "cogs.palmreading", "cogs.happy"]
 
 @bot.event
 async def on_ready():
