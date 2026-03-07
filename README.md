@@ -24,3 +24,5 @@ We used Python to write the commands, and Oracle to host it. The horoscopes are 
 screen -S discordbot
 python3 bot.py
 
+## Check it out
+Check it out at this server (just go to the channel called hack-club-testing): https://discord.gg/xAuaZXUQtc
