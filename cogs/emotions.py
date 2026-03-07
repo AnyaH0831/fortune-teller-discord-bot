@@ -111,6 +111,10 @@ class Happy(commands.Cog):
             answer = f"The slang bot died of cringe. It's currently being revived."
         await interaction.followup.send(f"**{interaction.user.display_name}:** {situation}\n**Slang Bot:** {answer}")
 
+    # random emotions, and inside out
+    # accepts questions about itself
+    # have different models and compare them
+
 
 async def setup(bot):
     await bot.add_cog(Happy(bot))
